@@ -1,5 +1,4 @@
 #include "Matrix.h"
-#include <iostream>
 #include <algorithm>
 #include <iterator>
 #include <cassert>
@@ -31,7 +30,6 @@ Matrix::Matrix(const vector<ld>& col_vector) : Matrix(col_vector.size(), 1)
 // Copy constructor
 Matrix::Matrix(const Matrix& mat) : rows{ mat.rows }, columns{ mat.columns }
 {
-    cout << "Copy constructor called" << endl;
     this->mat = mat.mat;
 }
 
@@ -46,7 +44,6 @@ Matrix::Matrix(Matrix&& mat) noexcept :
 // Copy Assignment
 Matrix& Matrix::operator=(const Matrix& mat)
 {
-    cout << "Copy Assignment called" << endl;
     if (&mat == this)
         return *this;
 
@@ -159,13 +156,18 @@ std::ostream& operator<< (std::ostream& out, const Matrix& mat)
         string inner_separator = "";
         for (auto& col : row)
         {
-            cout << inner_separator << col;
+            out << inner_separator << col;
             inner_separator = ", ";
         }
         outer_separator = " }, ";
     }
     out << " } }";
     return out;
+}
+
+Matrix::ld Matrix::get(int row, int column) const
+{
+    return this->mat.at(row).at(column);
 }
 
 std::pair<size_t, size_t> Matrix::size() const
@@ -197,4 +199,24 @@ Matrix Matrix::transpose() const
         for (int j = 0; j < this->rows; ++j)
             m.mat[i][j] = this->mat[j][i];
     return m;
+}
+
+
+Matrix Matrix::apply(const function<Matrix::ld(Matrix::ld)>& func) const
+{
+    Matrix temp = *this;
+    for (auto& x : temp.mat)
+        for (auto& y : x)
+            y = func(y);
+    return temp;
+}
+
+vector<Matrix::ld> Matrix::vec() const
+{
+    vector<Matrix::ld> ans;
+    for (auto& x : this->transpose().mat)
+        for (auto& y : x)
+            ans.push_back(y);
+
+    return ans;
 }
