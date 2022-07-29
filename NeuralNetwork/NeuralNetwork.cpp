@@ -3,6 +3,9 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cassert>
+#include "Matrix.h"
+
 
 using namespace std;
 using ld = long double;
@@ -47,20 +50,6 @@ std::istream& operator>> (std::istream& in, IRISEntry& iris)
     return in;
 }
 
-class Matrix
-{
-private:
-    const int rows, columns;
-    vector<vector<ld>> mat;
-public:
-    Matrix(int rows, int columns) : rows{ rows }, columns{ columns }
-    {
-        mat.resize(rows, vector<ld>(columns, 0));
-    }
-
-
-};
-
 void load_data(vector<IRISEntry>& vec)
 {
     fstream file("IRIS.csv", ios::in);
@@ -82,6 +71,7 @@ void load_data(vector<IRISEntry>& vec)
 
 int main()
 {
-    vector<IRISEntry> v;
-    load_data(v);
+    Matrix m1({ {1,2,3},{4,5,6} });
+    auto m2 = m1.transpose();
+    cout << m1 << endl;
 }
