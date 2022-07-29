@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 #include <cassert>
+#include <random>
+#include <algorithm>
 #include <cmath>
 #include "Matrix.h"
 
@@ -196,16 +198,26 @@ public:
     }
 };
 
-int main()
+int main(int argc, char** argv)
 {
     auto res = Dataset::load_data();
+
+    auto rng = std::default_random_engine{};
+    std::shuffle(std::begin(res), std::end(res), rng);
+
     auto nn = NeuralNetwork({ 4,3 });
     const int epochs = 10000;
+
+    string s(argv[1]);
+    stringstream sstr(s);
+    ld alpha;
+    sstr >> alpha;
+    cout << "Using learning rate: " << alpha << endl;
 
     for (int epoch = 1; epoch <= epochs; ++epoch)
     {
         for (auto& data : res)
-            nn.train(data.x, data.y, 0.1);
+            nn.train(data.x, data.y, alpha);
 
         if (epoch % 10 != 0)
             continue;
